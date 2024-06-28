@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 )
@@ -20,9 +21,21 @@ func NewJSONDatabase(path string, indent bool) *JSONDatabase {
 	}
 }
 
-func (j *JSONDatabase) LoadInto(v interface{}) {
+func (j *JSONDatabase) Load(v interface{}, writeDefault bool) {
 	j.flock.Lock()
 	defer j.flock.Unlock()
+
+	if _, err := os.Stat("config.json"); err != nil {
+		// slog.Error("could not open config.json", "err", err)
+
+		b, err := json.MarshalIndent(v, "", "    ")
+		if err != nil {
+			panic(fmt.Errorf("could not marshal default data: %w", err))
+		} else {
+			os.WriteFile("config.json", b, 0644)
+		}
+		panic("empty config.json created")
+	}
 
 	content, err := os.ReadFile(j.Path)
 	if err != nil {
