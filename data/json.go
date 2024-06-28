@@ -7,15 +7,20 @@ import (
 )
 
 type JSONDatabase struct {
-	DataLock sync.RWMutex
-	flock    sync.Mutex
-	Path     string
-	Indent   bool
+	flock  *sync.Mutex
+	Path   string
+	Indent bool
+}
+
+func NewJSONDatabase(path string, indent bool) *JSONDatabase {
+	return &JSONDatabase{
+		flock:  &sync.Mutex{},
+		Path:   path,
+		Indent: indent,
+	}
 }
 
 func (j *JSONDatabase) LoadInto(v interface{}) {
-	j.DataLock.Lock()
-	defer j.DataLock.Unlock()
 	j.flock.Lock()
 	defer j.flock.Unlock()
 
@@ -31,8 +36,6 @@ func (j *JSONDatabase) LoadInto(v interface{}) {
 }
 
 func (j *JSONDatabase) Save(v interface{}) (err error) {
-	j.DataLock.RLock()
-	defer j.DataLock.RUnlock()
 	j.flock.Lock()
 	defer j.flock.Unlock()
 
