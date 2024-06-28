@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"sync"
 
@@ -48,7 +47,7 @@ func main() {
 
 	a := []int{1, 2, 3, 4, 5, 6}
 	for k := range a {
-		fmt.Println(a, k)
+		slog.Info("ranging", "k", k)
 		a = a[0:1]
 	}
 }
