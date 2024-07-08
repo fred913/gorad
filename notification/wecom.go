@@ -47,13 +47,13 @@ func (bot *WeComBot) SendMessage(msg map[string]interface{}) error {
 	}
 
 	var r weComResponse
-	resp, b, err := radhttp.JSONDo(&weComDefaultClient, req, &r)
+	resp, b, err := radhttp.DoAsJSON(&weComDefaultClient, req, &r)
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad HTTP Status: %s\n\t%s", resp.Status, string(b))
+	if err = radhttp.EnsureSuccessful(resp); err != nil {
+		return fmt.Errorf("%w\nbody: %s", err, string(b))
 	}
 
 	if r.ErrCode != 0 {
