@@ -85,7 +85,7 @@ func EnsureSuccessful(resp *http.Response) error {
 		return errors.New("response is nil")
 	}
 	if !IsSuccessful(resp) {
-		return fmt.Errorf("bad statusCode: %d %s", resp.StatusCode, resp.Status)
+		return fmt.Errorf("bad statusCode: %s", resp.Status)
 	}
 	return nil
 }
